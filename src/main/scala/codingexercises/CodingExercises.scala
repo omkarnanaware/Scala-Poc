@@ -1,0 +1,5 @@
+package codingexercises
+
+object CodingExercises {
+
+}
