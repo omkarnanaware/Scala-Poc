@@ -1,0 +1,5 @@
+package scaladatatypes
+
+object ScalaDataTypes {
+
+}

@@ -1,0 +1,5 @@
+package exceptionhandling
+
+object ExceptionHandling {
+
+}
