@@ -1,0 +1,177 @@
+The java.nio.file package in Java provides a comprehensive set of APIs for file I/O operations,
+offering more flexibility and performance compared to the old java.io package.
+The package includes classes for file and directory manipulation, file attributes, and more.
+Here’s a detailed explanation of the key classes and functions in the java.nio.file package with Scala code examples for reference:
+
+1. Path Class
+Purpose: Represents a file or directory path.
+Common Methods:
+getFileName(): Returns the name of the file or directory.
+getParent(): Returns the parent directory.
+getRoot(): Returns the root component of the path.
+toAbsolutePath(): Converts the path to an absolute path.
+resolve(Path other): Resolves a given path against this path.
+Scala Example:
+
+
+import java.nio.file.{Paths, Path}
+
+object PathExample {
+  def main(args: Array[String]): Unit = {
+    val path: Path = Paths.get("example.txt")  // Create a Path object
+
+    // Print various components of the path
+    println(s"File Name: ${path.getFileName}")
+    println(s"Parent Directory: ${path.getParent}")
+    println(s"Root: ${path.getRoot}")
+    println(s"Absolute Path: ${path.toAbsolutePath}")
+
+    // Resolve another path
+    val resolvedPath = path.resolve("subdir/anotherfile.txt")
+    println(s"Resolved Path: ${resolvedPath}")
+  }
+}
+-----------------------------------------------------------------------------------------
+
+2. Files Class
+Purpose: Contains static methods for file operations.
+Common Methods:
+exists(Path path): Checks if the file exists.
+createFile(Path path): Creates a new file.
+createDirectories(Path path): Creates directories.
+delete(Path path): Deletes a file.
+readAllLines(Path path): Reads all lines from a file.
+write(Path path, Iterable<? extends CharSequence> lines): Writes lines to a file.
+Scala Example:
+
+import java.nio.file.{Files, Paths, Path}
+import java.nio.charset.StandardCharsets
+
+object FilesExample {
+  def main(args: Array[String]): Unit = {
+    val path: Path = Paths.get("example.txt")
+
+    // Check if file exists
+    if (Files.exists(path)) {
+      println(s"File '${path.getFileName}' exists.")
+    } else {
+      println(s"File '${path.getFileName}' does not exist.")
+    }
+
+    // Create a new file
+    Files.createFile(path)
+    println(s"File '${path.getFileName}' created.")
+
+    // Write lines to the file
+    Files.write(path, "Hello, NIO!".getBytes(StandardCharsets.UTF_8))
+
+    // Read all lines from the file
+    val lines = Files.readAllLines(path)
+    lines.forEach(println)
+
+    // Delete the file
+    Files.delete(path)
+    println(s"File '${path.getFileName}' deleted.")
+  }
+}
+-----------------------------------------------------------------------------------------
+3. Paths Class
+Purpose: Provides utility methods to create Path instances.
+Common Methods:
+get(String first, String... more): Converts a path string or sequence into a Path object.
+Scala Example:
+
+
+import java.nio.file.Paths
+
+object PathsExample {
+  def main(args: Array[String]): Unit = {
+    // Create a Path object using Paths.get()
+    val path = Paths.get("example", "subdir", "file.txt")
+    println(s"Path: ${path}")
+  }
+}
+
+-----------------------------------------------------------------------------------------
+4. FileSystems Class
+Purpose: Provides access to the file system.
+Common Methods:
+getDefault(): Returns the default FileSystem instance.
+Scala Example:
+
+
+import java.nio.file.{FileSystems, FileSystem}
+
+object FileSystemsExample {
+  def main(args: Array[String]): Unit = {
+    // Get the default file system
+    val fileSystem: FileSystem = FileSystems.getDefault
+    println(s"Default File System: ${fileSystem}")
+  }
+}
+
+-----------------------------------------------------------------------------------------
+5. FileVisitResult Enum
+Purpose: Used in file tree traversal.
+Common Values:
+CONTINUE: Continue the traversal.
+TERMINATE: Terminate the traversal.
+SKIP_SUBTREE: Skip the subtree.
+SKIP_SIBLINGS: Skip siblings.
+Scala Example:
+
+
+import java.nio.file.{Files, FileVisitResult, Path, SimpleFileVisitor, FileVisitOption}
+import java.nio.file.attribute.BasicFileAttributes
+import java.util.EnumSet
+
+object FileVisitResultExample {
+  class MyFileVisitor extends SimpleFileVisitor[Path] {
+    override def visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult = {
+      println(s"Visiting file: ${file}")
+      FileVisitResult.CONTINUE
+    }
+
+    override def postVisitDirectory(dir: Path, exc: Exception): FileVisitResult = {
+      println(s"Finished visiting directory: ${dir}")
+      FileVisitResult.CONTINUE
+    }
+  }
+
+  def main(args: Array[String]): Unit = {
+    val startPath = Paths.get(".")
+    Files.walkFileTree(startPath, EnumSet.noneOf(classOf[FileVisitOption]), Integer.MAX_VALUE, new MyFileVisitor)
+  }
+}
+
+-----------------------------------------------------------------------------------------
+6. StandardOpenOption Enum
+Purpose: Represents options for opening files.
+Common Values:
+CREATE: Create a new file if it does not exist.
+READ: Open the file for reading.
+WRITE: Open the file for writing.
+APPEND: Open the file for appending data.
+TRUNCATE_EXISTING: Truncate an existing file.
+Scala Example:
+
+
+import java.nio.file.{Files, Paths, StandardOpenOption}
+import java.nio.charset.StandardCharsets
+
+object StandardOpenOptionExample {
+  def main(args: Array[String]): Unit = {
+    val path = Paths.get("example.txt")
+
+    // Open file for writing, creating if necessary
+    val options = Set(StandardOpenOption.CREATE, StandardOpenOption.WRITE)
+    Files.write(path, "Hello, with StandardOpenOption!".getBytes(StandardCharsets.UTF_8), options.toArray: _*)
+  }
+}
+Summary
+Path: Represents a file or directory path and provides methods to interact with it.
+Files: Provides static methods to perform file operations like reading, writing, and deleting.
+Paths: Utility class to create Path instances.
+FileSystems: Accesses the default file system.
+FileVisitResult: Enum for controlling file tree traversal.
+StandardOpenOption: Enum for specifying file opening options.

@@ -1,0 +1,197 @@
+Exception Handling in Scala
+In Scala, exception handling is similar to Java but provides more flexibility. Exceptions in Scala are handled using the try, catch, and finally blocks. Scala also provides the ability to define custom exceptions. Exception handling in Scala follows the principle of fail-fast: if an error occurs, it's best to report it as soon as possible rather than continue with erroneous behavior.
+
+Key Elements of Exception Handling:
+try block: Wraps the code that might throw an exception.
+catch block: Catches and handles exceptions.
+finally block: Contains code that will always be executed, regardless of whether an exception occurred or not (used for clean-up activities like closing resources).
+Scala Exception Hierarchy:
+The exception hierarchy in Scala is similar to Java:
+
+Throwable is the superclass of all errors and exceptions.
+Exception: Used for conditions that a program should catch. This includes:
+RuntimeException: Exceptions that occur during program execution (like division by zero).
+Other exceptions like IOException, SQLException, etc.
+Error: Represents serious problems that a reasonable application should not try to catch (e.g., OutOfMemoryError).
+Syntax of Exception Handling
+
+try {
+  // Code that might throw an exception
+} catch {
+  // Exception handling code
+} finally {
+  // Code that will always execute (optional)
+}
+Example: Basic Exception Handling
+
+object BasicExceptionHandling {
+  def divide(a: Int, b: Int): Int = {
+    try {
+      a / b
+    } catch {
+      case ex: ArithmeticException =>
+        println("Cannot divide by zero!")
+        0  // Return default value
+    } finally {
+      println("Executed finally block")
+    }
+  }
+
+  def main(args: Array[String]): Unit = {
+    val result = divide(10, 0)
+    println(s"Result: $result")
+  }
+}
+Explanation:
+The divide method tries to divide a by b.
+If division by zero occurs, an ArithmeticException is caught, and a message is printed.
+The finally block always runs, regardless of whether an exception was thrown or not.
+Catching Multiple Exceptions
+Multiple exceptions can be handled using catch blocks with pattern matching.
+
+
+object MultipleExceptionHandling {
+  def main(args: Array[String]): Unit = {
+    try {
+      val arr = Array(1, 2)
+      println(arr(5))  // This will throw an ArrayIndexOutOfBoundsException
+    } catch {
+      case ex: ArithmeticException =>
+        println("Arithmetic Exception occurred!")
+      case ex: ArrayIndexOutOfBoundsException =>
+        println("Array Index Out Of Bounds Exception occurred!")
+      case ex: Exception =>
+        println("General exception occurred: " + ex)
+    } finally {
+      println("This is the finally block.")
+    }
+  }
+}
+Explanation:
+Different types of exceptions can be caught and handled separately.
+The Exception case handles all general exceptions that are not specifically matched.
+User-Defined Exception
+In Scala, you can define your own custom exceptions by extending the Exception class.
+
+Example: Custom Exception
+
+// Define a custom exception
+class InvalidAgeException(message: String) extends Exception(message)
+
+object CustomExceptionHandling {
+  def validateAge(age: Int): Unit = {
+    if (age < 18) {
+      throw new InvalidAgeException("Age is less than 18, not allowed!")
+    } else {
+      println("Valid age!")
+    }
+  }
+
+  def main(args: Array[String]): Unit = {
+    try {
+      validateAge(15)  // This will throw InvalidAgeException
+    } catch {
+      case ex: InvalidAgeException =>
+        println(s"Custom Exception caught: ${ex.getMessage}")
+      case ex: Exception =>
+        println("General Exception caught")
+    }
+  }
+}
+Explanation:
+InvalidAgeException is a custom exception that extends the Exception class.
+The validateAge method checks the age and throws this custom exception if the age is less than 18.
+The main method catches this custom exception and prints the appropriate message.
+throw in Scala
+The throw keyword is used to throw an exception explicitly. When an exception is thrown, it disrupts the normal flow of the program, and the nearest catch block that can handle the exception is executed.
+
+Example:
+
+
+object ThrowExample {
+  def test(num: Int): Unit = {
+    if (num < 0) {
+      throw new IllegalArgumentException("Negative numbers are not allowed")
+    } else {
+      println(s"Valid number: $num")
+    }
+  }
+
+  def main(args: Array[String]): Unit = {
+    try {
+      test(-5)
+    } catch {
+      case ex: IllegalArgumentException =>
+        println(s"Exception caught: ${ex.getMessage}")
+    }
+  }
+}
+finally in Scala
+The finally block contains code that always runs, irrespective of whether an exception is thrown or not. It is typically used for clean-up activities such as closing file streams, releasing resources, etc.
+
+Example:
+
+
+object FinallyExample {
+  def divide(a: Int, b: Int): Int = {
+    try {
+      a / b
+    } catch {
+      case ex: ArithmeticException =>
+        println("Cannot divide by zero!")
+        0
+    } finally {
+      println("Executing finally block")
+    }
+  }
+
+  def main(args: Array[String]): Unit = {
+    println(s"Result: ${divide(10, 2)}")
+    println(s"Result: ${divide(10, 0)}")  // This will cause division by zero
+  }
+}
+Explanation:
+The finally block runs in both cases: whether an exception is thrown or not.
+It is useful for tasks like closing file handles, database connections, etc.
+Key Exception Classes in Scala
+Throwable: The root class for all exceptions and errors.
+Exception: Base class for exceptions that are intended to be caught.
+RuntimeException: Unchecked exceptions like NullPointerException, ArithmeticException.
+IOException: Used for input-output exceptions.
+CustomException: Can be user-defined, as shown in the example above.
+Example: Using Try, Success, and Failure
+Scala provides Try, Success, and Failure for a more functional approach to handling exceptions.
+
+
+import scala.util.{Try, Success, Failure}
+
+object TrySuccessFailureExample {
+  def safeDivide(a: Int, b: Int): Try[Int] = Try(a / b)
+
+  def main(args: Array[String]): Unit = {
+    val result1 = safeDivide(10, 2)
+    val result2 = safeDivide(10, 0)
+
+    result1 match {
+      case Success(value) => println(s"Division successful: $value")
+      case Failure(exception) => println(s"Failed with exception: ${exception.getMessage}")
+    }
+
+    result2 match {
+      case Success(value) => println(s"Division successful: $value")
+      case Failure(exception) => println(s"Failed with exception: ${exception.getMessage}")
+    }
+  }
+}
+Explanation:
+Try captures the result of a computation that might throw an exception.
+Success is returned if the computation succeeds.
+Failure is returned if the computation throws an exception.
+This is a more functional way of handling exceptions without disrupting the flow of the program.
+Summary:
+Exception Handling: Use try, catch, and finally to handle exceptions.
+Custom Exceptions: Extend the Exception class to create custom exceptions.
+Functional Exception Handling: Use Try, Success, and Failure for a functional approach to handle errors.
+throw: Use the throw keyword to explicitly throw exceptions when needed.
+finally: Ensure important clean-up actions are performed, regardless of exceptions.
+This covers the core concepts of exception handling in Scala with practical examples.

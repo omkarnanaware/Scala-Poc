@@ -11,6 +11,7 @@ object MapOperations {
   Immutable maps in Scala are defined using Map.
   Operations like adding, removing, or updating key-value pairs create new maps and leave the original map unchanged.
   Example operations: +, -, contains, foreach, and accessing elements with map(key).
+  ------------------------------------------------------------------------------------------------------------------------------------------
   Mutable Map:
 
   Mutable maps are created using scala.collection.mutable.Map.

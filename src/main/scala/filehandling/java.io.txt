@@ -1,0 +1,230 @@
+The java.io library in Java is a fundamental package that provides various classes for system input and output operations,
+ including reading from and writing to files, managing streams, and handling exceptions.
+ Below is a simple breakdown of the main classes and their common functions, explained in an easy-to-understand manner.
+  The code examples are written in Scala to match the user's requirement.
+
+-----------------------------------------------------------------------------------------
+1. File Class
+Purpose: Represents a file or directory in the filesystem.
+Common Methods:
+exists(): Checks if a file or directory exists.
+getName(): Returns the name of the file.
+getPath(): Returns the file path.
+delete(): Deletes the file.
+mkdir(): Creates a directory.
+Scala Example:
+
+
+import java.io.File
+
+object FileExample {
+  def main(args: Array[String]): Unit = {
+    val file = new File("example.txt")  // Create a File object representing a file
+
+    // Check if file exists
+    if (file.exists()) {
+      println(s"File '${file.getName}' exists at path ${file.getPath}")
+    } else {
+      println(s"File '${file.getName}' does not exist.")
+    }
+
+    // Create a new directory
+    val directory = new File("newDir")
+    if (directory.mkdir()) {
+      println("Directory created.")
+    } else {
+      println("Failed to create directory.")
+    }
+  }
+}
+
+-----------------------------------------------------------------------------------------
+2. FileReader Class
+Purpose: Used to read the content of a file character by character.
+Common Methods:
+read(): Reads a single character from the file.
+close(): Closes the file after reading.
+Scala Example:
+
+
+import java.io.FileReader
+
+object FileReaderExample {
+  def main(args: Array[String]): Unit = {
+    val fileReader = new FileReader("example.txt")  // Open the file for reading
+    var i = fileReader.read()  // Read the first character
+
+    // Continue reading until the end of the file
+    while (i != -1) {
+      print(i.toChar)  // Convert the character code to char and print
+      i = fileReader.read()  // Read the next character
+    }
+
+    fileReader.close()  // Close the file after reading
+  }
+}
+
+-----------------------------------------------------------------------------------------
+3. FileWriter Class
+Purpose: Used to write characters to a file.
+Common Methods:
+write(): Writes a single character or a string to the file.
+close(): Closes the file after writing.
+Scala Example:
+
+
+import java.io.FileWriter
+
+object FileWriterExample {
+  def main(args: Array[String]): Unit = {
+    val fileWriter = new FileWriter("example.txt")  // Open the file for writing
+
+    // Write text to the file
+    fileWriter.write("Hello, Scala IO!\n")
+    fileWriter.write("FileWriter makes file handling easy.\n")
+
+    fileWriter.close()  // Close the file after writing
+  }
+}
+
+-----------------------------------------------------------------------------------------
+4. BufferedReader Class
+Purpose: Efficiently reads characters from a file by buffering the input (used with FileReader).
+Common Methods:
+readLine(): Reads a line of text from the file.
+close(): Closes the reader after reading.
+Scala Example:
+
+
+import java.io.{BufferedReader, FileReader}
+
+object BufferedReaderExample {
+  def main(args: Array[String]): Unit = {
+    val fileReader = new FileReader("example.txt")
+    val bufferedReader = new BufferedReader(fileReader)
+
+    var line = bufferedReader.readLine()  // Read the first line
+
+    // Continue reading lines until the end of the file
+    while (line != null) {
+      println(line)
+      line = bufferedReader.readLine()  // Read the next line
+    }
+
+    bufferedReader.close()  // Close the reader after reading
+  }
+}
+
+-----------------------------------------------------------------------------------------
+5. BufferedWriter Class
+Purpose: Efficiently writes characters to a file by buffering the output (used with FileWriter).
+Common Methods:
+write(): Writes a string or character to the file.
+newLine(): Writes a newline character.
+close(): Closes the writer after writing.
+Scala Example:
+
+
+import java.io.{BufferedWriter, FileWriter}
+
+object BufferedWriterExample {
+  def main(args: Array[String]): Unit = {
+    val fileWriter = new FileWriter("example.txt", true)  // Append mode
+    val bufferedWriter = new BufferedWriter(fileWriter)
+
+    // Write text to the file
+    bufferedWriter.write("Buffered writing improves performance.")
+    bufferedWriter.newLine()  // Write a newline
+
+    bufferedWriter.close()  // Close the writer after writing
+  }
+}
+
+-----------------------------------------------------------------------------------------
+6. PrintWriter Class
+Purpose: Provides methods to print formatted representations of objects to a text-output stream.
+Common Methods:
+print(): Prints text without a newline.
+println(): Prints text with a newline.
+close(): Closes the stream.
+Scala Example:
+
+import java.io.PrintWriter
+
+object PrintWriterExample {
+  def main(args: Array[String]): Unit = {
+    val printWriter = new PrintWriter("example.txt")
+
+    // Print different data types to the file
+    printWriter.println("Hello, PrintWriter!")
+    printWriter.println(123)  // Print an integer
+    printWriter.println(45.67)  // Print a floating-point number
+
+    printWriter.close()  // Close the writer
+  }
+}
+
+-----------------------------------------------------------------------------------------
+7. ObjectInputStream & ObjectOutputStream Classes
+Purpose: Used to read and write objects (serialization and deserialization).
+Common Methods:
+readObject(): Reads an object from the stream.
+writeObject(): Writes an object to the stream.
+Scala Example:
+
+import java.io.{FileOutputStream, ObjectOutputStream, FileInputStream, ObjectInputStream}
+
+@SerialVersionUID(100L)  // Required for serialization
+class Person(val name: String, val age: Int) extends Serializable
+
+object ObjectStreamExample {
+  def main(args: Array[String]): Unit = {
+    // Writing the object to a file
+    val person = new Person("Alice", 25)
+    val fileOut = new FileOutputStream("person.obj")
+    val objectOut = new ObjectOutputStream(fileOut)
+    objectOut.writeObject(person)  // Serialize the object
+    objectOut.close()
+
+    // Reading the object from a file
+    val fileIn = new FileInputStream("person.obj")
+    val objectIn = new ObjectInputStream(fileIn)
+    val restoredPerson = objectIn.readObject().asInstanceOf[Person]  // Deserialize the object
+    objectIn.close()
+
+    println(s"Restored Person: Name = ${restoredPerson.name}, Age = ${restoredPerson.age}")
+  }
+}
+
+-----------------------------------------------------------------------------------------
+8. IOException Class
+Purpose: Represents an I/O error. It's the parent class of many other exceptions like FileNotFoundException.
+Common Methods:
+getMessage(): Returns the error message.
+Scala Example:
+
+
+import java.io.{File, FileNotFoundException, IOException}
+
+object IOExceptionExample {
+  def main(args: Array[String]): Unit = {
+    try {
+      val file = new File("nonexistent.txt")
+      val fileReader = new FileReader(file)  // This will throw FileNotFoundException
+    } catch {
+      case e: FileNotFoundException =>
+        println(s"File not found: ${e.getMessage}")
+      case e: IOException =>
+        println(s"I/O Error: ${e.getMessage}")
+    }
+  }
+}
+-----------------------------------------------------------------------------------------
+Summary of java.io Library:
+File: Represents a file or directory.
+FileReader/FileWriter: For reading and writing files character by character.
+BufferedReader/BufferedWriter: Buffers input/output for efficiency when reading or writing text.
+PrintWriter: For printing formatted text to files.
+ObjectInputStream/ObjectOutputStream: For serializing and deserializing objects.
+IOException: Handles errors during file operations.
+These are some of the most common classes and functions used in the java.io package, along with example Scala code for reference.
